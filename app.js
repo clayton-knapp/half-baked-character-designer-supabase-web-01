@@ -18,6 +18,7 @@ redirectToBuild();
 signUpForm.addEventListener('submit', async(event) => {
     event.preventDefault();
     const user = await signupUser(signUpEmail.value, signUpPassword.value);
+    console.log(signUpEmail.value, signUpPassword.value);
 
     if (user){
         redirectToBuild();

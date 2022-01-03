@@ -6,7 +6,7 @@ import {
     updateBottom,
     updateHead,
     updateMiddle,
-    updateChatchphrases
+    updateCatchphrases
 } from '../fetch-utils.js';
 
 checkAuth();
@@ -18,7 +18,7 @@ const headEl = document.getElementById('head');
 const middleEl = document.getElementById('middle');
 const bottomEl = document.getElementById('bottom');
 const reportEl = document.getElementById('report');
-const chatchphrasesEl = document.getElementById('chatchphrases');
+const catchphrasesEl = document.getElementById('catchphrases');
 const catchphraseInput = document.getElementById('catchphrase-input');
 const catchphraseButton = document.getElementById('catchphrase-button');
 const logoutButton = document.getElementById('logout');
@@ -30,6 +30,7 @@ let bottomCount = 0;
 
 headDropdown.addEventListener('change', async() => {
     // increment the correct count in state
+    headCount++;
 
     // update the head in supabase with the correct data
     refreshData();
@@ -38,6 +39,7 @@ headDropdown.addEventListener('change', async() => {
 
 middleDropdown.addEventListener('change', async() => {
     // increment the correct count in state
+    middleCount++;
     
     // update the middle in supabase with the correct data
     refreshData();
@@ -46,6 +48,7 @@ middleDropdown.addEventListener('change', async() => {
 
 bottomDropdown.addEventListener('change', async() => {
     // increment the correct count in state
+    bottomCount++;
     
     // update the bottom in supabase with the correct data
     refreshData();
@@ -63,12 +66,18 @@ catchphraseButton.addEventListener('click', async() => {
 });
 
 window.addEventListener('load', async() => {
-    let character;
+    // let character;
     // on load, attempt to fetch this user's character
+    const character = await getCharacter();
 
     // if this user turns out not to have a character
-    // create a new character with correct defaults for all properties (head, middle, bottom, catchphrases)
-    // and put the character's catchphrases in state (we'll need to hold onto them for an interesting reason);
+    if (!character) {
+        // create a new character with correct defaults for all properties (head, middle, bottom, catchphrases)
+        
+        const defaultCharacter = { head: 1, middle: 1, bottom: 1, catchphrases: ['phrase1', 'phrase2', 'phrase3'] };
+        const newCharacter = await createCharacter(defaultCharacter);
+    }
+        // and put the character's catchphrases in state (we'll need to hold onto them for an interesting reason);
 
     // then call the refreshData function to set the DOM with the updated data
     refreshData();
@@ -85,7 +94,7 @@ function displayStats() {
 
 
 async function fetchAndDisplayCharacter() {
-    // fetch the caracter from supabase
+    // fetch the character from supabase
 
     // if the character has a head, display the head in the dom
     // if the character has a middle, display the middle in the dom
