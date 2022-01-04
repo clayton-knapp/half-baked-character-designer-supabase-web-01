@@ -12,7 +12,8 @@ export async function createCharacter(character){
     // use the newCharacter to create a single new character for this user in supabase
     const response = await client
         .from('characters')
-        .insert[character];
+        .insert([character])
+        .single();
 
     return checkError(response);
 }
@@ -22,6 +23,10 @@ export async function updateHead(value){
 
     // in supabase, update the head property
     // for the character whose user_id match's the currently logged in user's id
+    const response = await client
+        .from('characters')
+        .update({ head: value })
+        .match({ user_id: currentUserId });
 
     return checkError(response);    
 }
@@ -32,6 +37,10 @@ export async function updateMiddle(value){
 
     // in supabase, update the middle property
     // for the character whose user_id match's the currently logged in user's id
+    const response = await client
+        .from('characters')
+        .update({ middle: value })
+        .match({ user_id: currentUserId });
 
     return checkError(response);    
 }
@@ -42,6 +51,10 @@ export async function updateBottom(value){
 
     // in supabase, update the bottom property
     // for the character whose user_id match's the currently logged in user's id
+    const response = await client
+        .from('characters')
+        .update({ bottom: value })
+        .match({ user_id: currentUserId });
 
     return checkError(response);    
 }
@@ -81,6 +94,8 @@ export async function getCharacter() {
 
     return checkError(response);    
 }
+
+
 
 export async function getUser() {
     return client.auth.session();

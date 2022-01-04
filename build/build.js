@@ -33,6 +33,8 @@ headDropdown.addEventListener('change', async() => {
     headCount++;
 
     // update the head in supabase with the correct data
+    await updateHead(headDropdown.value);
+
     refreshData();
 });
 
@@ -42,6 +44,8 @@ middleDropdown.addEventListener('change', async() => {
     middleCount++;
     
     // update the middle in supabase with the correct data
+    await updateMiddle(middleDropdown.value);
+
     refreshData();
 });
 
@@ -51,33 +55,43 @@ bottomDropdown.addEventListener('change', async() => {
     bottomCount++;
     
     // update the bottom in supabase with the correct data
+    await updateBottom(bottomDropdown.value);
+
     refreshData();
 });
 
 catchphraseButton.addEventListener('click', async() => {
-    catchphraseInput.value = '';
+    // catchphraseInput.value = '';
 
-    // go fetch the old catch phrases
+    // go fetch the old catch phrases (living in the character object)
+    const currentCharacter = await getCharacter();
     
     // update the catchphrases array locally by pushing the new catchphrase into the old array
+    // our returned character object has an array of catchphrases living on it
+	//push the new crachphrase to an array of all the existing catchphrases
+    currentCharacter.catchphrases.push();
 
     // update the catchphrases in supabase by passing the mutated array to the updateCatchphrases function
     refreshData();
 });
 
 window.addEventListener('load', async() => {
-    // let character;
     // on load, attempt to fetch this user's character
-    const character = await getCharacter();
+    let character = await getCharacter();
 
     // if this user turns out not to have a character
     if (!character) {
         // create a new character with correct defaults for all properties (head, middle, bottom, catchphrases)
-        
-        const defaultCharacter = { head: 1, middle: 1, bottom: 1, catchphrases: ['phrase1', 'phrase2', 'phrase3'] };
-        const newCharacter = await createCharacter(defaultCharacter);
+        const defaultCharacter = { 
+            head: 'dog', 
+            middle: 'blue', 
+            bottom: 'dog', 
+            catchphrases: [] 
+        };
+
+        character = await createCharacter(defaultCharacter);
     }
-        // and put the character's catchphrases in state (we'll need to hold onto them for an interesting reason);
+    // and put the character's catchphrases in state (we'll need to hold onto them for an interesting reason);
 
     // then call the refreshData function to set the DOM with the updated data
     refreshData();
@@ -95,12 +109,30 @@ function displayStats() {
 
 async function fetchAndDisplayCharacter() {
     // fetch the character from supabase
+    const currentCharacter = await getCharacter();
 
     // if the character has a head, display the head in the dom
+    if (currentCharacter.head) {
+        headEl.style.backgroundImage = `url('../assets/${currentCharacter.head}-head.png')`;
+    }
     // if the character has a middle, display the middle in the dom
+    if (currentCharacter.middle) {
+        middleEl.style.backgroundImage = `url('../assets/${currentCharacter.middle}-middle.png')`;
+    }
     // if the character has a pants, display the pants in the dom
-    
+    if (currentCharacter.bottom) {
+        bottomEl.style.backgroundImage = `url('../assets/${currentCharacter.bottom}-pants.png')`;
+    }
+
     // loop through catchphrases and display them to the dom (clearing out old dom if necessary)
+    catchphrasesEl.textContent = '';
+    for (let catchphrase of currentCharacter.catchphrases) {
+        const p = document.createElement('p');
+        p.textContent = catchphrase;
+        p.classList.add('catchphrases');
+        catchphrasesEl.append(catchphrase);
+    }
+
 }
 
 function refreshData() {
