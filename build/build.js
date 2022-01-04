@@ -61,23 +61,31 @@ bottomDropdown.addEventListener('change', async() => {
 });
 
 catchphraseButton.addEventListener('click', async() => {
-    // catchphraseInput.value = '';
+    //grab the user input catchphrase
+    const newCatchphrase = catchphraseInput.value;
 
     // go fetch the old catch phrases (living in the character object)
     const currentCharacter = await getCharacter();
     
-    // update the catchphrases array locally by pushing the new catchphrase into the old array
+    // update the catchphrases array locally by pushing the new catchphrase into the old array - NAW!
     // our returned character object has an array of catchphrases living on it
 	//push the new crachphrase to an array of all the existing catchphrases
-    currentCharacter.catchphrases.push();
+    currentCharacter.catchphrases.push(newCatchphrase);
 
     // update the catchphrases in supabase by passing the mutated array to the updateCatchphrases function
+    await updateCatchphrases(currentCharacter.catchphrases);
+
+    //clear the input field
+    catchphraseInput.value = '';
+
+
+
     refreshData();
 });
 
 window.addEventListener('load', async() => {
     // on load, attempt to fetch this user's character
-    let character = await getCharacter();
+    const character = await getCharacter();
 
     // if this user turns out not to have a character
     if (!character) {
@@ -89,7 +97,7 @@ window.addEventListener('load', async() => {
             catchphrases: [] 
         };
 
-        character = await createCharacter(defaultCharacter);
+        await createCharacter(defaultCharacter);
     }
     // and put the character's catchphrases in state (we'll need to hold onto them for an interesting reason);
 
@@ -101,10 +109,14 @@ logoutButton.addEventListener('click', () => {
     logout();
 });
 
+function refreshData() {
+    displayStats();
+    fetchAndDisplayCharacter();
+}
+
 function displayStats() {
     reportEl.textContent = `In this session, you have changed the head ${headCount} times, the body ${middleCount} times, and the pants ${bottomCount} times. And nobody can forget your character's classic catchphrases:`;
 }
-
 
 
 async function fetchAndDisplayCharacter() {
@@ -129,13 +141,9 @@ async function fetchAndDisplayCharacter() {
     for (let catchphrase of currentCharacter.catchphrases) {
         const p = document.createElement('p');
         p.textContent = catchphrase;
-        p.classList.add('catchphrases');
-        catchphrasesEl.append(catchphrase);
+        p.classList.add('catchphrase');
+        catchphrasesEl.append(p);
     }
 
 }
 
-function refreshData() {
-    displayStats();
-    fetchAndDisplayCharacter();
-}
