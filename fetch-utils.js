@@ -4,7 +4,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsI
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export async function createCharacter(character){
-    //DONT NEED THIS
+    //DONT NEED THIS - this is how to make an immutable copy of the array instead of mutating the array
     // const newCharacter = {
     //     ...character, 
     //     user_id: client.auth.user().id, 
@@ -19,75 +19,75 @@ export async function createCharacter(character){
     return checkError(response);
 }
 
-export async function updateHead(value){
-    const currentUserId = client.auth.user().id;
+// export async function updateHead(value){
+//     const currentUserId = client.auth.user().id;
 
-    // in supabase, update the head property
-    // for the character whose user_id match's the currently logged in user's id
+//     // in supabase, update the head property
+//     // for the character whose user_id match's the currently logged in user's id
+//     const response = await client
+//         .from('characters')
+//         .update({ head: value })
+//         .match({ user_id: currentUserId });
+
+//     return checkError(response);    
+// }
+
+// export async function updateMiddle(value){
+//     const currentUserId = client.auth.user().id;
+
+//     // in supabase, update the middle property
+//     // for the character whose user_id match's the currently logged in user's id
+//     const response = await client
+//         .from('characters')
+//         .update({ middle: value })
+//         .match({ user_id: currentUserId });
+
+//     return checkError(response);    
+// }
+
+// export async function updateBottom(value){
+//     const currentUserId = client.auth.user().id;
+
+//     // in supabase, update the bottom property
+//     // for the character whose user_id match's the currently logged in user's id
+//     const response = await client
+//         .from('characters')
+//         .update({ bottom: value })
+//         .match({ user_id: currentUserId });
+
+//     return checkError(response);    
+// }
+
+// export async function updateCatchphrases(catchphraseArray){
+//     const currentUserId = client.auth.user().id;
+
+//     // in supabase, update the catchphrases property
+//     // for the character whose user_id match's the currently logged in user's id
+//     const response = await client
+//         .from('characters')
+//         .update({ catchphrases: catchphraseArray })
+//         .match({ user_id: currentUserId });
+
+//     return checkError(response);    
+// }
+
+
+
+// CHALLENGE: how would you use this function? which functions would it replace? what's going on with the brackets in the update() arguments?
+
+export async function updateCharacter(currentCharacterId, part, value){
+    // const currentUserId = client.auth.user().id;
+    // const currentCharacter = await getCharacter();
+
+
     const response = await client
         .from('characters')
-        .update({ head: value })
-        .match({ user_id: currentUserId });
+        .update({ [part]: value }) //WHY DOES PART NEED []?
+        // .match({ user_id: currentUserId });
+        .match({ id: currentCharacterId });
 
     return checkError(response);    
 }
-
-
-export async function updateMiddle(value){
-    const currentUserId = client.auth.user().id;
-
-    // in supabase, update the middle property
-    // for the character whose user_id match's the currently logged in user's id
-    const response = await client
-        .from('characters')
-        .update({ middle: value })
-        .match({ user_id: currentUserId });
-
-    return checkError(response);    
-}
-
-
-export async function updateBottom(value){
-    const currentUserId = client.auth.user().id;
-
-    // in supabase, update the bottom property
-    // for the character whose user_id match's the currently logged in user's id
-    const response = await client
-        .from('characters')
-        .update({ bottom: value })
-        .match({ user_id: currentUserId });
-
-    return checkError(response);    
-}
-
-export async function updateCatchphrases(catchphraseArray){
-    const currentUserId = client.auth.user().id;
-
-    // in supabase, update the catchphrases property
-    // for the character whose user_id match's the currently logged in user's id
-    const response = await client
-        .from('characters')
-        .update({ catchphrases: catchphraseArray })
-        .match({ user_id: currentUserId });
-
-    return checkError(response);    
-}
-
-
-/*
-CHALLENGE: how would you use this function? which functions would it replace? what's going on with the brackets in the update() arguments?
-
-export async function updateCharacter(part, value){
-    const currentUserId = client.auth.user().id;
-
-    const response = await client
-        .from('characters')
-        .update({ [part]: value })
-        .match({ user_id: currentUserId });
-
-    return checkError(response);    
-}
-*/
 
 
 export async function getCharacter() {
